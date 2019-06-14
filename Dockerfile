@@ -1,11 +1,11 @@
 #
 # nginx-proxy-manager Dockerfile
 #
-# https://github.com/jlesage/docker-nginx-proxy-manager
+# upstream: https://github.com/jlesage/docker-nginx-proxy-manager
 #
 
 # Pull base image.
-FROM jlesage/baseimage:alpine-3.8-v2.4.2
+FROM meiskam/nginx-tls1.3:alpine
 
 # Define software versions.
 ARG NGINX_PROXY_MANAGER_VERSION=2.0.13
@@ -20,7 +20,6 @@ WORKDIR /tmp
 RUN \
     add-pkg \
         nodejs \
-        nginx \
         nginx-mod-stream \
         mariadb \
         mariadb-client \
@@ -168,5 +167,5 @@ LABEL \
       org.label-schema.name="nginx-proxy-manager" \
       org.label-schema.description="Docker container for Nginx Proxy Manager" \
       org.label-schema.version="unknown" \
-      org.label-schema.vcs-url="https://github.com/jlesage/docker-nginx-proxy-manager" \
+      org.label-schema.vcs-url="https://github.com/meiskam/docker-nginx-proxy-manager" \
       org.label-schema.schema-version="1.0"

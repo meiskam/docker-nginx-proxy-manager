@@ -20,12 +20,10 @@ WORKDIR /tmp
 RUN \
     add-pkg \
         nodejs \
-        nginx-mod-stream \
         mariadb \
         mariadb-client \
         mariadb-server-utils \
         certbot \
-        openssl \
         apache2-utils \
         && \
     # Clean some uneeded stuff from mariadb.
@@ -165,7 +163,7 @@ EXPOSE 8080 4443 8181
 # Metadata.
 LABEL \
       org.label-schema.name="nginx-proxy-manager" \
-      org.label-schema.description="Docker container for Nginx Proxy Manager" \
+      org.label-schema.description="Docker container for Nginx Proxy Manager with tls1.3" \
       org.label-schema.version="unknown" \
       org.label-schema.vcs-url="https://github.com/meiskam/docker-nginx-proxy-manager" \
       org.label-schema.schema-version="1.0"

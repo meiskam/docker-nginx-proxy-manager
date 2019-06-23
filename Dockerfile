@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM jlesage/baseimage:alpine-3.8-v2.4.2
+FROM meiskam/nginx-tls1.3:alpine
 
 # Define software versions.
 ARG NGINX_PROXY_MANAGER_VERSION=2.0.13
@@ -20,13 +20,10 @@ WORKDIR /tmp
 RUN \
     add-pkg \
         nodejs \
-        nginx \
-        nginx-mod-stream \
         mariadb \
         mariadb-client \
         mariadb-server-utils \
         certbot \
-        openssl \
         apache2-utils \
         && \
     # Clean some uneeded stuff from mariadb.
@@ -41,12 +38,14 @@ RUN \
         /etc/nginx \
         /etc/init.d/nginx \
         /etc/logrotate.d/nginx \
-        /var/www && \
+        /var/www ; \
     ln -s /tmp/nginx /var/tmp/nginx && \
     # nginx always tries to open /var/lib/nginx/logs/error.log before reading
     # its configuration.  Make sure it exists.
     mkdir -p /var/lib/nginx/logs && \
-    ln -sf /config/log/nginx/error.log /var/lib/nginx/logs/error.log
+    ln -sf /config/log/nginx/error.log /var/lib/nginx/logs/error.log && \
+    mkdir -p /etc/nginx/logs && \
+    ln -sf /config/log/nginx/error.log /etc/nginx/logs/error.log
 
 # Install Nginx Proxy Manager.
 RUN \
@@ -92,6 +91,9 @@ RUN \
     cp -r /app/knexfile.js /opt/nginx-proxy-manager/ && \
     cp -r nginx-proxy-manager/rootfs/etc/nginx /etc/ && \
     cp -r nginx-proxy-manager/rootfs/var/www /var/ && \
+
+    # Remove CIPHER_MISMATCH for non-SNI, add tls1.3
+    sed-patch 's|ssl_ciphers aNULL;|#ssl_ciphers aNULL;\n  ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;|' /etc/nginx/conf.d/default.conf && \
 
     # Change the management interface port to the unprivileged port 8181.
     sed-patch 's|81|8181|' /opt/nginx-proxy-manager/src/backend/index.js && \

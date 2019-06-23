@@ -38,7 +38,7 @@ RUN \
         /etc/nginx \
         /etc/init.d/nginx \
         /etc/logrotate.d/nginx \
-        /var/www && \
+        /var/www ; \
     ln -s /tmp/nginx /var/tmp/nginx && \
     # nginx always tries to open /var/lib/nginx/logs/error.log before reading
     # its configuration.  Make sure it exists.
